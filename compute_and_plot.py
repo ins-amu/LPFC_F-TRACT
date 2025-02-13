@@ -6,7 +6,7 @@ Created on Mon Dec 30 16:54:03 2024
 """
 
 #Ftract - DLPFC&IFG 
-# Function integrating processes to compute the matrices of connctivity. 
+# Function integrating processes to compute the matrices of connectivity. 
 # Takes original matrices (stimulated x recorded), do necessary selection of rows/colomns, and merges for each specific analysis. 
 # Filters the resulting matrices accordign to statistical significancy. Plot results. 
 
