@@ -18,7 +18,7 @@ The matrices are organized with stimulated parcels in rows and recorded parcels 
 ## Repository Structure
 
 ### Scripts
-- `compute_and_plot`: Main script that coordinates the analysis pipeline. Using Ftract raw data with `matrices` and `plotting` to generate the treated matrices text files and plot connectivity maps. 
+- `compute_and_plot`: Main script that coordinates the analysis pipeline using Ftract raw data with `matrices` and `plotting` to generate the processed matrices text files and plot connectivity maps. 
 - `matrices`: Handles data processing and matrix generation
 - `plotting`: Folder of visualization functions (matrices, bar_plots and brain maps)
 - `figures`: Generates paper figures reading processed data (data shared in `Results`)
@@ -200,7 +200,7 @@ scatter plot of probability of effective connectivity of roi to the rest of the 
 ## Usage Notes
 - Raw data processing requires the full FTRACT database (not included)
 - Figure generation needs : 
-	- MNE python freesurfer data (provided in folder 'MNE-data'
+	- MNE python freesurfer data (provided in folder 'MNE-data')
 	- MNE python, we used version 1.8.0
 	- Matrices of data provided in 'Results'
 	- ENIGMA toolbox for subcortical plotting, provided
