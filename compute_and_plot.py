@@ -233,7 +233,7 @@ def main():
     #LEFT
     roi_dlpfc_ifg_l = [l for l in roi_dlpfc_ifg if l.startswith('lh.')]
     index_dlpfc_ifg_l = idx.get_idx(path_general_folder, res125 + '.txt', roi_dlpfc_ifg_l)
-    dlpfc_ifg_L = 'lh.DLPFC_IFG' #creo que esto no lo use?? 
+    dlpfc_ifg_L = 'lh.DLPFC_IFG' 
     label_dlpfc_ifg_L  = combine_labels(roi_dlpfc_ifg_l, labels_pathX ,dlpfc_ifg_L, labels_pathX)
     index_dlpfc_ifg_l_no_merge = [(i,) for i in index_dlpfc_ifg_l]
     labels_all_left   = [l for l in labels_all_x if (( l.startswith('lh.') or  l.startswith ('Left') ) and l not in roi_dlpfc_ifg)]
