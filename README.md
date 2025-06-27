@@ -7,21 +7,23 @@ This repository contains scripts and data for generating matrices and brain maps
 While raw data is not shared, we provide processed data matrices containing intracerebral evoked potentials (iEPs) parameters:
 - Probability with corresponding confidence intervals
 - Peak delays
+The number of recordings for each connection is also provided noted by 'N'.
 
 The matrices are organized with stimulated parcels in rows and recorded parcels in columns, using Lausanne-2008 parcellations at different resolutions.
 
-#### Time Windows
+#### Time Windows of analysis of connectivity
 - General data: 0-100ms
 - Direct connectivity: 0-50ms
 - Indirect connectivity: 100-400ms
 
 ## Repository Structure
 
-### Scripts
-- `compute_and_plot`: Main script that coordinates the analysis pipeline using Ftract raw data with `matrices` and `plotting` to generate the processed matrices text files and plot connectivity maps. 
-- `matrices`: Handles data processing and matrix generation
+### Main scripts
+- `compute_atlas_mats`: Computation of connectivity matriceswith the particular considerations of this project. Taking FTRACT raw connectivity matrices in Lausanne parcellations it coordinates de selection of pertinent rows and columns and the masking to avoid outliers. 
+- `matrices`: Handles data processing and matrix generation - called by compute_atlas_mats
 - `plotting`: Folder of visualization functions (matrices, bar_plots and brain maps)
 - `figures`: Generates paper figures reading processed data (data shared in `Results`)
+- 'Definitions' : Contains main definitions of ROIs, eg. which Lausanne2008-125 parcels compose the 'LPFC', or functional networks, etc. Basic functionalities of indexing.
 
 ### Modules and Data needed to generate results
 - ENIGMA: module used for subcortical plotting
@@ -33,9 +35,9 @@ Contains processed matrices with the following naming convention:
 `parameter_stimulatedParcelResolution_recordedParcelResolution_timeWindow`
 
 Example: `p_125to33_0_100ms` represents:
-- Efferent probability of connectivity
-- From LPFC parcels (Lausanne2008-125)
-- To brain regions (Lausanne2008-33)
+- Efferent probability of connectivity 
+    - From LPFC parcels (Lausanne2008-125)
+    - To brain regions (Lausanne2008-33)
 - Time window: 0-100ms
 
 For analysis including custom merging of regions other terms appear (eg. 'all' to refer to all ipsilateral hemisphere merged as one parcel; and 'nets' for brain parcellated into functional networks).
@@ -48,11 +50,11 @@ Some cases also include 'L' and 'R' referring to hemisphere sides.
    - Contains: CI, Index, N, probability matrices
    - [Figure 2B]
 
-2. **AVG_all_LPFC**
-   - Average connectivity between LPFC merged as one parcel and the ipsilateral brain averaged
+2. **AVG_LPFC_AVG_all**
+   - Average connectivity between LPFC merged as one parcel and the ipsilateral brain merged as one parcel
    - Contains: CI, Index, N, probability matrices
 
-3. **Functional_nets**
+3. **Functional_Networks**
    - LPFC Lausanne2008-125 parcels to ipsilateral functional networks
    - Contains: CI, Index, N, probability matrices, Labels_nets
    - Segmented ROI analysis : anterior/posterior/inferior/superior DLPFC and IFG 
@@ -70,53 +72,44 @@ Some cases also include 'L' and 'R' referring to hemisphere sides.
    - Contains: CI, Index, N, probability matrices
    - [Figure 2C & 2E second row]
 
-6. **Mean_DLPFC_Eff**
-   - Directedness of connectivity from DLPFC as one parcel to the rest of the brain in Lausanne2008-33 parcellation. 
-   - Contains : DLPFC label objets for plotting
+6. **Mean_ROI_Eff**
+   - Directedness of connectivity from DLPFC and IFG as individual merged parcels to the rest of the brain in Lausanne2008-33 parcellation. 
+   - Contains : DLPFC and IFG label objets for plotting
 		Direct connectivity (0-50ms)
 		- Contains: CI, Index, N, probability matrices
    		Indirect connectivity (100-400ms)
    		- Contains: CI, Index, N, probability matrices
    - [Figure 3]
 
-7. **Mean_IFG_Eff**
-   - Directedness of connectivity from IFG as one parcel to the rest of the brain in Lausanne2008-33 parcellation. 
-   - Contains : IFG label objets for plotting
-		Direct connectivity (0-50ms)
-		- Contains: CI, Index, N, probability matrices
-   		Indirect connectivity (100-400ms)
-   		- Contains: CI, Index, N, probability matrices
-   - [Figure 3]
-
-8. **N_implanted_contacts**
+7. **N_implanted_contacts**
    - Number of implanted contacts on the LPFC or recording LPFC stimulations. 
    - [Figure 2A]
-9. **Resolutions**
+   
+8. **Resolutions**
    - Resolution comparison data, three LPFC stimulations for brain parcelled in Lausanne2008-33/125/500
    - [Figure 1DEF]
- 
-10. **Additional Data** 
-   -Lausanne2008 parcel definitions (33, 125, 250, 500)
 
 ## Technical Details
-- CI : confidence intervals for computed probability of connectivity
-- Index : technical information for computation 
+- CI : binomial confidence intervals for computed probability of connectivity, alpha = 0.05
+- Index : technical information for computation / plotting
 - N : number of recordings used for the computation of the connectivity 
 - Labels_nets : Object '.label' use to plot. 
 
 
 ### Matrix Generation
-- ROI definitions use Lausanne2008-125 resolution
+- ROI definitions use Lausanne2008-125 resolution (Definitions)
 - LPFC consists of DLPFC + IFG for both hemispheres
 - Filtering retains cortical parcels plus amygdala and hippocampus
-- Combined resolution analyses overlay roi-roi connectivity on roi-all connectivity
-- Statistical masking applied based on EP count and stimulation numbers
+- Combined resolution analyses have roi-roi connectivity and roi-all connectivity. Supperposition in brain plots with transparent parcel if roi-roi is nan.
+- Statistical masking applied based on recording numbers and EP for delays. 
+
+### Parcel Merge 
+The merge of Lausanne2008 fine resolution parcels to create personalized regions is done previous to the computation of probability and not included in these scripts. 
 
 ### Matrix Correction Process
 Using `matrices.atlas_mat`:
 1. Takes original matrices (xx, xy)
 2. Applies dimensional indices
-3. Handles parcel merging via tuple lists
 4. Generates statistical masks
 5. Saves corrected matrices as text files
 
@@ -200,12 +193,8 @@ scatter plot of probability of effective connectivity of roi to the rest of the 
 ## Usage Notes
 - Raw data processing requires the full FTRACT database (not included)
 - Figure generation needs : 
-	- MNE python freesurfer data (provided in folder 'MNE-data')
+	- MNE python freesurfer data (provided in folder 'MNE-data'
 	- MNE python, we used version 1.8.0
 	- Matrices of data provided in 'Results'
 	- ENIGMA toolbox for subcortical plotting, provided
 	- Matplotlib braces, toolbox provided 
-	- Other dependencies listed in 'requirements.txt', 'setup_env.sh' is also provided to set up the environment with them. Run it : 
-	chmod +x setup_env.sh
-	./setup_env.sh  
-

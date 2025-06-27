@@ -6,7 +6,7 @@ Created on Mon Dec 30 16:54:03 2024
 """
 
 #Ftract - DLPFC&IFG 
-# Function integrating processes to compute the matrices of connectivity. 
+# Function integrating processes to compute the matrices of connctivity. 
 # Takes original matrices (stimulated x recorded), do necessary selection of rows/colomns, and merges for each specific analysis. 
 # Filters the resulting matrices accordign to statistical significancy. Plot results. 
 
@@ -233,7 +233,7 @@ def main():
     #LEFT
     roi_dlpfc_ifg_l = [l for l in roi_dlpfc_ifg if l.startswith('lh.')]
     index_dlpfc_ifg_l = idx.get_idx(path_general_folder, res125 + '.txt', roi_dlpfc_ifg_l)
-    dlpfc_ifg_L = 'lh.DLPFC_IFG' 
+    dlpfc_ifg_L = 'lh.DLPFC_IFG' #creo que esto no lo use?? 
     label_dlpfc_ifg_L  = combine_labels(roi_dlpfc_ifg_l, labels_pathX ,dlpfc_ifg_L, labels_pathX)
     index_dlpfc_ifg_l_no_merge = [(i,) for i in index_dlpfc_ifg_l]
     labels_all_left   = [l for l in labels_all_x if (( l.startswith('lh.') or  l.startswith ('Left') ) and l not in roi_dlpfc_ifg)]
