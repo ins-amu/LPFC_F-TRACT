@@ -12,7 +12,7 @@ import os
 
 def analyze_connectivity(p_matrix, delay_matrix, output_path, title, filename, color, xlim, ylim, label):
     """
-    Analyzes and plots de relationsip between probability and delay of connectivity data, saving scatter plots and computing correlations.
+    Analyzes and plots de relationship between probability and delay of connectivity data, saving scatter plots and computing correlations.
     
     Parameters:
     p_matrix: numpy array (p-values or probability matrix)
@@ -36,16 +36,18 @@ def analyze_connectivity(p_matrix, delay_matrix, output_path, title, filename, c
         plt.scatter(x, y, alpha=0.7, color=color, s=50)
         plt.ylim(ylim)
         plt.xlim(xlim)
+        plt.ylabel('probability of efferent connectivity', fontsize=18)
+        plt.xlabel('peak delay [ms]', fontsize= 18)
         plt.tick_params(axis='both', which='major', labelsize=16, width=3)
-        plt.title(title)
-        plt.legend([label])
+        plt.title(title, fontsize=20)
+        plt.legend([label], fontsize=18)
         ax = plt.gca()
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.spines['bottom'].set_linewidth(3)
         ax.spines['left'].set_linewidth(3)
-        plt.show()
         plt.savefig(os.path.join(output_path, filename))
+        plt.show()
         plt.close()
     
     # Filter out NaN values
@@ -91,8 +93,6 @@ def main():
     os.chdir(output_paths_ifg)
     p_IFG_indirect = np.loadtxt('p_' + name_xy + '.txt').reshape(1, -1)
     pd_IFG_indirect = np.loadtxt('peak_delay_mean_' + name_xy + '.txt').reshape(1, -1)
-   
-
 
 #Plots 
     output_path = os.path.join(rootpath,'p_delays_scatters')

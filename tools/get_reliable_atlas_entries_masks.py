@@ -26,11 +26,17 @@ def get_reliable_prob_mask(p, N_stim, N_impl=None, alpha=0.05, min_n_suc=10, min
     mask = ((N_stim * (1. - p) >= min_n_fail) | (N_stim * p >= min_n_suc))  & (ci <= max_ci)
     if N_impl is not None:
         mask = mask & (N_impl >= min_n_impl)
+
+
     return mask, ci
 
 def get_reliable_feat_mask(N_above, N_impl=None, min_n_feat=20, min_n_impl=3, debug=False):
     mask = (N_above >= min_n_feat)
     if N_impl is not None:
         mask = mask & (N_impl >= min_n_impl)
-    return mask 
+    return mask
 
+
+def get_N_mask(N, N_thresh) :
+    mask = N >= N_thresh
+    return mask

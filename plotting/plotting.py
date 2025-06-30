@@ -14,49 +14,22 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from PIL import Image
 import pandas as pd
-from tools.def_funtional_250 import functional_networks_250
-from collections import OrderedDict
-import sys
-sys.path.append('ENIGMA')
-from enigmatoolbox.plotting import plot_subcortical
+from enigmatoolbox.plotting.surface_plotting import plot_subcortical
 #TODO : automat figure formating
+import Definitions
 
 #Path to MNE data mesh 
 meshdirname = r'C:\Users\avalos-alais.s\FTRACT_LPFC\MNE-data\subjects\cvs_avg35_inMNI152'
-#% Definition of LPFC 
+#% Definition of LPFC
 def plot_lpfc_definition(output_path, labels_path, labels_all_33,  meshdirname = meshdirname ) : 
-    
-    
+
     figR = mne.viz.create_3d_figure(size=(400, 400), bgcolor= None, smooth_shading=None, handle=None, scene=True, show=False )
     figL = mne.viz.create_3d_figure(size=(400, 400), bgcolor= None, smooth_shading=None, handle=None, scene=True, show=False )
     Brain = mne.viz.get_brain_class()
     brainR = Brain("", hemi='rh', surf='inflated', subjects_dir=meshdirname, figure=figR,cortex = "low_contrast", title = 'LPFC Definition')
     brainL = Brain("", hemi='lh', surf='inflated', subjects_dir=meshdirname, figure=figL,cortex = "low_contrast", title = 'LPFC Definition')
     
-    colors_lpfc_dict = OrderedDict([
-        ('lh.superiorfrontal_6',            '#000271'),
-        ('lh.rostralmiddlefrontal_1',       '#ff9233'),
-        ('lh.rostralmiddlefrontal_2',       '#5233ff'),
-        ('lh.rostralmiddlefrontal_3',       '#92f3ff'),
-        ('lh.caudalmiddlefrontal_1',        '#ffdd1d'),
-        ('lh.caudalmiddlefrontal_2',        '#9c4079'),
-        ('lh.caudalmiddlefrontal_3',        '#749e33'),
-        ('lh.parstriangularis_1',           '#cc3271'),
-        ('lh.parsopercularis_1',            '#ec9fff'),
-        ('lh.parsopercularis_2',            '#ff4cfc'),
-        ('rh.superiorfrontal_4',            '#ff3731'),
-        ('rh.superiorfrontal_8',            '#0e5fff'),
-        ('rh.rostralmiddlefrontal_1',       '#2eaff9'),
-        ('rh.rostralmiddlefrontal_2',       '#a633ff'),
-        ('rh.rostralmiddlefrontal_3',       '#9aee1a'),
-        ('rh.caudalmiddlefrontal_1',        '#b88dff'),
-        ('rh.caudalmiddlefrontal_2',        '#0f6e0e'),
-        ('rh.caudalmiddlefrontal_3',        '#ffd6f5'),
-        ('rh.parstriangularis_1',           '#feff33'),
-        ('rh.parstriangularis_2',           '#079599'),
-        ('rh.parsopercularis_1',            '#ff780e'),
-        ('rh.parsopercularis_2',            '#c2161e'),
-    ])
+    colors_lpfc_dict = Definitions.colors_dlpfc_ifg_dict
     
     colors_lpfc = list(colors_lpfc_dict.values())
     names_lpfc  = list(colors_lpfc_dict.keys())
@@ -85,12 +58,14 @@ def plot_lpfc_definition(output_path, labels_path, labels_all_33,  meshdirname =
             brainR.add_label(label_temp, color = colors_lpfc[i]) 
     os.chdir(output_path)
     brainL.show_view(azimuth = -200, elevation = 90,  roll =90)  
-    brainL.save_image(filename='lh_LPFC_def.png', mode='rgba')  
+    brainL.save_image(filename='lh_LPFC_def.png', mode='rgba')
     brainR.show_view(azimuth = 200, elevation =-90,  roll = -90)   
-    brainR.save_image(filename='rh_LPFC_def.png', mode='rgba')   
-    
+    brainR.save_image(filename='rh_LPFC_def.png', mode='rgba')
+
     brainR.close()
     brainL.close()
+
+
 #%%Average connectivity plot
 # fig: lateral part of both hemispheres ipsilateral avg connectivity of roi parcels. 
 def plot_mean_p(mat_p, labels, labels_path, output_fig_paths, output_fig_name, title,  vmax = 0.2, vmin = 0 , cbar = 'plasma', nan_color = '#64646400', meshdirname =  meshdirname ): 
@@ -188,7 +163,7 @@ def plot_efferent (mat_all, mat_roi, labels_roi, labels_all , labels_path_roi, l
         idx_r_amyg  = labels_all.index('Right-Amygdala.label')
         idx_l_hipp  = labels_all.index('Left-Hippocampus.label')
         idx_r_hipp  = labels_all.index('Right-Hippocampus.label')
-        
+
         val_l_amyg = mat_all[:, idx_l_amyg]
         val_r_amyg = mat_all[:, idx_r_amyg]
         val_l_hipp = mat_all[:, idx_l_hipp]
@@ -205,7 +180,7 @@ def plot_efferent (mat_all, mat_roi, labels_roi, labels_all , labels_path_roi, l
         
         x_data = mat_all[s,:]
         j_colors = np.zeros_like(x_data, dtype=int)
-        for i, x in enumerate(x_data):# Encontrar el índice más cercano para cada valor de x_data en values
+        for i, x in enumerate(x_data):# closer index for each value
             j = np.argmin(np.abs(values - x))
             j_colors[i] = j
         colors =  [cmaplist[j] for j in j_colors]
@@ -213,12 +188,12 @@ def plot_efferent (mat_all, mat_roi, labels_roi, labels_all , labels_path_roi, l
         os.chdir(labels_path_all)
         c = 0
         for r in range(0, mat_all.shape[1]): # Plot Cortical parcels Recording (starting with lh. or rh)
-            if 'lh.' in labels_all[r] : 
+            if 'lh.' in labels_all[r] :
                  label_temp = mne.read_label(labels_all[r])
                  if not np.isnan(x_data[r]): 
                     brainL.add_label(label_temp, color = colors[c] ) 
                  if border_print : brainL.add_label(label_temp, color = 'k', borders = 0.00001) 
-            if 'rh.' in labels_all[r] :  
+            if 'rh.' in labels_all[r] :
                 label_temp = mne.read_label(labels_all[r])
                 if not np.isnan(x_data[r]):
                     brainR.add_label(label_temp, color = colors[c] ) 
@@ -238,7 +213,7 @@ def plot_efferent (mat_all, mat_roi, labels_roi, labels_all , labels_path_roi, l
         c = 0
         for r in labels_roi: 
             label_temp = mne.read_label(r)
-            if 'lh.' in r and 'lh.' in labels_roi[s]: 
+            if 'lh.' in r and 'lh.' in labels_roi[s]:
                 if np.isnan(x_data[c]): 
                     brainL.add_label(label_temp, color = nan_color, borders= False )
                 else : 
@@ -246,7 +221,7 @@ def plot_efferent (mat_all, mat_roi, labels_roi, labels_all , labels_path_roi, l
                 
                 if border_print : brainL.add_label(label_temp, color = 'k', borders = 0.00001) 
           
-            if 'rh.' in r and 'rh.' in labels_roi[s] : 
+            if 'rh.' in r and 'rh.' in labels_roi[s] :
                 if  np.isnan(x_data[c]): 
                     brainR.add_label(label_temp, color = nan_color, borders= False )
                 else : 
@@ -257,18 +232,21 @@ def plot_efferent (mat_all, mat_roi, labels_roi, labels_all , labels_path_roi, l
             c = c+1;
         # Subcortical
         if flag_subcort :
-             sub_cort =  np.empty(14) ; sub_cort[:] =  np.nan
-             sub_cort[1] = val_l_amyg[s] # s of the stimulated parcel 
+             sub_cort =  np.empty(14);sub_cort[:] = np.nan
+             #TO add grey subcortical in case of nan, if not its done transparent to avoid having the extra substructures
+             sub_cort[1] =  0.33
+             sub_cort[3] =  0.33
+             sub_cort[8] =  0.33
+             sub_cort[10] = 0.33
+             os.chdir(subcort_path)
+             fig_sc_grey = plot_subcortical(array_name=sub_cort, size=(1000, 500),cmap="grey", color_bar=False, ventricles=False, color_range=(0, 1), screenshot=True,transparent_bg= True,  filename=labels_roi[s] + '_subcort_grey.png')
+             sub_cort[1] = val_l_amyg[s] # s of the stimulated parcel
              sub_cort[3] = val_l_hipp[s]
              sub_cort[8] = val_r_amyg[s]
-             sub_cort[10] = val_r_hipp[s] 
-             pd.DataFrame(sub_cort, columns=['Values'])
-             
+             sub_cort[10] = val_r_hipp[s]
+             #
              os.chdir(subcort_path)
-             
-             fig_sc = plot_subcortical(array_name=sub_cort, size=(1000, 500),
-             
-              cmap=cbar, color_bar=False, ventricles=False, color_range=(vmin, vmax) , screenshot = True ,  filename= labels_roi[s] + '_subcort.png' )
+             fig_sc = plot_subcortical(array_name=sub_cort, size=(1000, 500), cmap=cbar, color_bar=False, ventricles=False, color_range=(vmin, vmax) , screenshot = True , transparent_bg=True,  filename= labels_roi[s] + '_subcort.png' )
 
         #FIGURES 
         
@@ -288,7 +266,7 @@ def plot_efferent (mat_all, mat_roi, labels_roi, labels_all , labels_path_roi, l
         img_L_med = brainL.screenshot(time_viewer=True)
         img_L_med = img_L_med[40:-40, 3:-3, :]
         
-        fig, axs = plt.subplots(3, 3, figsize=(20, 22), gridspec_kw={'height_ratios': [1, 0.001, 1], 'width_ratios': [1, 1, 0.1]})
+        fig, axs = plt.subplots(3, 3, figsize=(25, 20), gridspec_kw={'height_ratios': [1, 0.001, 1], 'width_ratios': [1, 1, 0.1]})
 
         axs[0, 0].imshow(img_L_lat)
         axs[0, 0].axis('off')  
@@ -307,9 +285,12 @@ def plot_efferent (mat_all, mat_roi, labels_roi, labels_all , labels_path_roi, l
         axs[1, 2].remove()  
         
         if flag_subcort:
-            subcort_ax = fig.add_axes([0.08, 0.45, 0.8, 0.4]) 
-        
-            img_subcortical = Image.open(fig_sc)        
+            subcort_ax = fig.add_axes([0.08, 0.45, 0.8, 0.4])
+            img_subcortical_grey = Image.open(fig_sc_grey)
+            subcort_ax.imshow(np.array(img_subcortical_grey))
+            subcort_ax.axis('off')
+
+            img_subcortical = Image.open(fig_sc)
             subcort_ax.imshow(np.array(img_subcortical))
             subcort_ax.axis('off')
         
@@ -318,9 +299,10 @@ def plot_efferent (mat_all, mat_roi, labels_roi, labels_all , labels_path_roi, l
         cm = mpl.colormaps[cbar]
         norm = plt.Normalize(vmin=vmin, vmax=vmax)
 
-        cb_ax = fig.add_axes([0.93, 0.4, 0.02, 0.4]) 
+        cb_ax = fig.add_axes([0.89, 0.4, 0.02, 0.4])
         cbar1 = fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cm), cax=cb_ax, orientation='vertical')
-        cbar1.ax.tick_params(labelsize=30)
+        cbar1.ax.tick_params(labelsize=50)
+
         
         plt.tight_layout(rect=[0, 0.20, 1, 1])
         os.chdir(output_fig_paths)
@@ -332,28 +314,16 @@ def plot_efferent (mat_all, mat_roi, labels_roi, labels_all , labels_path_roi, l
         brainR.close()
     
 
-#%%Functional Networks 
-#TODO: Generalize to plot any def : take out function of def, names and index as params. 
-def plot_functional_net (path_defs, list_labels_roi, labels_path125, labels_nets, colors, functional_fig, meshdirname = meshdirname  ) :   
-    #plot the definition of the special segmentation 
-    [names_labels_regions, index_net, index_roi] = functional_networks_250(path_defs)
-    labels_roi = [list_labels_roi[idx] for idx in index_roi]
-    
+#%%Functional Networks
+def plot_segmentation_def (list_labels_regions, path_labels_regions, list_labels_roi, path_labels_roi, colors_regions, path_output_fig, def_name = 'segmentation_def',  meshdirname = meshdirname ) : #(path_defs, list_labels_roi, labels_path125, labels_nets, colors, functional_fig, meshdirname = meshdirname  ) :
+    #plot the definition of the special segmentation
     Brain = mne.viz.get_brain_class()
-    subjects_dir = mne.datasets.sample.data_path() / "subjects"
-   
-    mne.datasets.fetch_hcp_mmp_parcellation(subjects_dir=subjects_dir, verbose=True)
-   
-    mne.datasets.fetch_aparc_sub_parcellation(subjects_dir=subjects_dir, verbose=True)
-   
-    mne.utils.set_config("SUBJECTS_DIR", subjects_dir, set_env=True)
-   
-    brainL = Brain("cvs_avg35_inMNI152-Lausanne125","lh","inflated",subjects_dir=subjects_dir,cortex='#64646400',background="white",size=(800, 600),title = 'Definition' )
-    brainR = Brain("cvs_avg35_inMNI152-Lausanne125","rh", "inflated",subjects_dir=subjects_dir,cortex='#64646400',background="white",size=(800, 600),title = 'Definition' )
+    brainL = Brain(meshdirname,"lh","inflated",subjects_dir=meshdirname,cortex='#64646400',background="white",size=(800, 600),title = 'Definition' )
+    brainR = Brain(meshdirname,"rh", "inflated",subjects_dir=meshdirname,cortex='#64646400',background="white",size=(800, 600),title = 'Definition' )
    
     #roi :
-    os.chdir(labels_path125)
-    for p in labels_roi : 
+    os.chdir(path_labels_roi)
+    for p in list_labels_roi :
         label_p =  mne.read_label(p+'.label')
         if 'lh' in p : 
             brainL.add_label(label_p, borders = 0.00001, color = 'k' ) 
@@ -361,25 +331,26 @@ def plot_functional_net (path_defs, list_labels_roi, labels_path125, labels_nets
             brainR.add_label(label_p, borders = 0.00001, color = 'k' ) 
            
     #networks
-    os.chdir(labels_nets)
+    os.chdir(path_labels_regions)
     c = 0
-    for l in names_labels_regions : 
+    for l in list_labels_regions :
         label_temp = mne.read_label(l+ '.label')
         if l.startswith('lh.') : 
-            brainL.add_label(label_temp, color = colors[c]) 
+            brainL.add_label(label_temp, color = colors_regions[c])
             c=c+1
         if l.startswith('rh.') : 
-            brainR.add_label(label_temp, color = colors[c]) 
+            brainR.add_label(label_temp, color = colors_regions[c])
             c=c+1
-   
+
+
+    # Legend -- Asuming simmetrical segmentation lh // rh. legend for colors
     patches = []
-    nets = names_labels_regions[:len(names_labels_regions)//2 ]
-    nets = [n.replace('lh.', '') for n in nets]
-    for color, text in zip(colors, nets):
+    regions = list_labels_regions[:len(list_labels_regions)//2 ]
+    regions = [n.replace('lh.', '') for n in regions]
+    for color, text in zip(colors_regions, regions):
         patch = mpatches.Patch(color=color, label=text)
         patches.append(patch)
-   
-    
+
     brainL.show_view(view="lat")
     img_L_lat = brainL.screenshot(time_viewer=True)
     img_L_lat = img_L_lat[30:-30, 30:-30, :]
@@ -407,18 +378,15 @@ def plot_functional_net (path_defs, list_labels_roi, labels_path125, labels_nets
     axs[0,1].axis('off')
     axs[1,1].imshow(img_R_med)
     axs[1,1].axis('off')
- 
-    fig.suptitle('Functional Networks', fontsize=80)
+    fig.suptitle(def_name, fontsize=80)
     fig.legend(handles=patches, loc='upper right', fontsize=50) 
     plt.tight_layout()
-    plt.subplots_adjust(wspace=-0.55, hspace=-0.15)  
-
-    os.chdir(functional_fig)
-    plt.savefig('Functional_Networks.svg')
-
+    plt.subplots_adjust(wspace=-0.55, hspace=-0.15)
+    os.chdir(path_output_fig)
+    plt.savefig(def_name + '.svg')
     plt.show() 
     
-def plot_efferent_fn(path_table, table, names_labels_regions,  roi , path_labels_regions, path_labels_roi , parcellation_file , path_output,  cbar_max ,roi_color = '#72B2F4' ,  colormap  = 'plasma', subject = 'cvs_avg35_inMNI152 -Lausanne250', meshdirname = meshdirname ):
+def plot_efferent_fn( table, names_labels_regions,  roi , path_labels_regions, path_labels_roi , path_output,  cbar_max ,roi_color = '#72B2F4' ,  colormap  = 'plasma', subject = 'cvs_avg35_inMNI152 -Lausanne250', meshdirname = meshdirname ):
     #TODO: generalize to all specific segmentaions
     #TODO: genrealize for afferent
     #plot directed efferent connectivity from roi to specific segmetation 
@@ -426,13 +394,7 @@ def plot_efferent_fn(path_table, table, names_labels_regions,  roi , path_labels
     names_labels_regions = [label if label.endswith('.label') else label + '.label' for label in names_labels_regions]
     
     Brain = mne.viz.get_brain_class()
-    subjects_dir = mne.datasets.sample.data_path() / "subjects"
-    
-    mne.datasets.fetch_hcp_mmp_parcellation(subjects_dir=subjects_dir, verbose=True)
-    
-    mne.datasets.fetch_aparc_sub_parcellation(subjects_dir=subjects_dir, verbose=True)
-    
-    mne.utils.set_config("SUBJECTS_DIR", subjects_dir, set_env=True)
+
     X = table  
     #Normalize to the max in all data
     min_value = np.nanmin(X)
@@ -453,25 +415,9 @@ def plot_efferent_fn(path_table, table, names_labels_regions,  roi , path_labels
             j_colors[i] = j
 
         if 'lh' in names_labels_regions[l]:
-            brain = Brain(
-                subject,
-                "lh",
-                "inflated",
-                subjects_dir=subjects_dir,
-                cortex="low_contrast",
-                background="white",
-                size=(800, 600),
-                title = 'Efferent connectivity')
+            brain = Brain(meshdirname,"lh","inflated",subjects_dir=meshdirname,cortex="low_contrast", background="white",size=(800, 600), title = 'Efferent connectivity')
         else :
-            brain = Brain(
-                subject,
-                "rh",
-                "inflated",
-                subjects_dir=subjects_dir,
-                cortex="low_contrast",
-                background="white",
-                size=(800, 600),
-                title = 'Efferent connectivity' )
+            brain = Brain(meshdirname,"rh", "inflated",subjects_dir=meshdirname,cortex="low_contrast", background="white",size=(800, 600),title = 'Efferent connectivity' )
                            
        #plot result of roi stims in region over roi
         os.chdir(path_labels_roi) #labels125 - dlpfc
@@ -509,7 +455,7 @@ def plot_efferent_fn(path_table, table, names_labels_regions,  roi , path_labels
         
         norm = plt.Normalize(vmin=0, vmax=cbar_max)
         cbar = fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap), ax=axs[1], orientation='vertical', fraction=0.5, pad=0.5)
-        cbar.ax.tick_params(labelsize=10)
+        cbar.ax.tick_params(labelsize=25)
 
         plt.tight_layout()
             
@@ -520,7 +466,7 @@ def plot_efferent_fn(path_table, table, names_labels_regions,  roi , path_labels
         brain.close()
 #%%Matrix plot
 def matrix_plot(mat, parcel_stim_names, parcel_rec_names, title, fig_name, output_path, colorm = 'plasma', vmax = 0.5) : 
-    #Not last version we use in the paper ( keys missing) 
+    #Not last version we use in the paper ( { keys missing)
     #plot horizontal  labels_list,
     plt.figure(figsize=(40, 10))  
 

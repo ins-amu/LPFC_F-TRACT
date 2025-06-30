@@ -13,7 +13,7 @@ import os
 
 import tools.stats as ts
 import tools.marray as tm
-import tools.common_lpfc as cd
+import tools.common_lpfc as cl
 
 
 # Not used, will wait for 2018 with LR asymmetry
@@ -49,12 +49,12 @@ def _plot_scatters(a1, a2, colors, diff, ax, star_mask=None, min_=0):
         # ax.plot(x, regression_q.params['x'] * x, color=cd.colors_lpfc[i], linestyle=':')
         regression_ols = ols("data ~ x -1", data=dict(data=a2[i], x=a1[i])).fit()
         regression_ols_l.append(regression_ols)
-        ax.plot(x, regression_ols.params['x'] * x, color=cd.colors_lpfc[i], linestyle='--', alpha=0.5)
+        ax.plot(x, regression_ols.params['x'] * x, color=cl.colors_lpfc[i], linestyle='--', alpha=0.5)
         # plot scatter
         if star_mask is None:
-            ax.scatter(a1[i], a2[i], c=colors[i], label=cd.names_lpfc[i])
+            ax.scatter(a1[i], a2[i], c=colors[i], label=cl.names_lpfc[i])
         else:
-            ax.scatter(a1[i][~star_mask[i]], a2[i][~star_mask[i]], c=colors[i], label=cd.names_lpfc[i])
+            ax.scatter(a1[i][~star_mask[i]], a2[i][~star_mask[i]], c=colors[i], label=cl.names_lpfc[i])
             ax.scatter(a1[i][star_mask[i]], a2[i][star_mask[i]], c=colors[i], marker='*', sizes=(400,))
     ax.plot(x, x, color='k', linewidth=2)
     ax.fill_between(x, x - diff, x + diff, alpha=0.3, color='gray')
@@ -86,7 +86,7 @@ def _get_asymmetric_connections(p1, p2, n1, n2, diff, alpha, debug=False):
         print('_get_asymmetric_connections(): final mask corr was passed by', np.nansum(final_mask))
     return final_mask, p1_p2
     
-def test2():
+def Atest2():
     k = 2
     a = np.array([[1, 3], [2, 4]])
     k_indices = np.argpartition(-a, k-1, axis=-1)[:, :k]
@@ -103,12 +103,12 @@ def main():
     min_ = -0.01
     alpha = 0.05
     # read data
-    names_125, names_33, p_125_33, N_125_33, CI_125_33, p_33_125, N_33_125, CI_33_125 = cd.read_data()
-    if True:
-        print(names_125.shape)
-        print(names_125.tolist().index('lh.caudalmiddlefrontal_1'))
-        print(names_33.shape)
-        print(names_33.tolist().index('ctx-rh-parstriangularis'))
+    names_125, names_33, p_125_33, N_125_33, CI_125_33, p_33_125, N_33_125, CI_33_125 = cl.read_data()
+    # if True:
+    #     print(names_125.shape)
+    #     print(names_125.tolist().index('lh.caudalmiddlefrontal_1'))
+    #     print(names_33.shape)
+    #     print(names_33.tolist().index('rh.parstriangularis'))
     ##############
     # eff vs aff 
     ##############
@@ -134,7 +134,7 @@ def main():
             print(p1_p2[*idx], 'is for', names_125[idx[0]], names_33[idx[1]])
     fig = plt.figure(figsize=(12, 8))
     ax = fig.add_subplot()
-    regression_q_l, regression_ols_l = _plot_scatters(p_125_33, p_33_125.T, cd.colors_lpfc, diff, ax, asym_mask, min_)
+    regression_q_l, regression_ols_l = _plot_scatters(p_125_33, p_33_125.T, cl.colors_lpfc, diff, ax, asym_mask, min_)
     R2_l, a_l, a_stderr_l = [], [], []
     for regression_ols in regression_ols_l:
         a_l.append(regression_ols.params['x'])
@@ -147,6 +147,7 @@ def main():
     print('Average R2', R2_mean, 'Std R2', np.std(np.array(R2_l)))
     R2_min = min(R2_l)
     print('Min R2', (R2_min), names_125[R2_l.index(R2_min)])
+    print("Mean slope coeff", np.mean(a_l), "std", np.std(a_l))
     fontsize = 26 
     fontname = 'Arial'
     ax.text(0.46, 0.32, r'average $R^2$ = {}'.format(round(R2_mean, 2)), fontsize=fontsize + 4, fontname=fontname)
@@ -187,7 +188,7 @@ def main():
     #     _plot_scatters(a1, a2, colors, ax) 
     # plt.show()
     
-def test():
+def Btest():
     a1 = np.array([
                     [1, 2, 3, 4],
                     [3, 4, 5, 6],

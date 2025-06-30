@@ -21,7 +21,7 @@ from tools import common_lpfc as cd
 
 
 network_labels = ['Visual', 'Somatomotor', 'Dorsal Attention', 'Ventral Attention', 'Limbic', 'Fronto-parietal', 'Default']
-network_labels = ['VN', 'SN', 'DAN', 'VAN', 'LN', 'FPN', 'DN']
+network_labels = ['VN', 'SMN', 'DAN', 'VAN', 'LN', 'FPN', 'DN']
 # network_colors = ['#89259a', '#64aff3','#2ecd00', '#f566d6', '#ffe496', '#ff972b', '#ff1010']
 network_colors = ['#89259a', '#64aff3','#2ecd00', '#f566d6', 'gold', '#ff972b', '#ff1010']
 
@@ -238,7 +238,8 @@ def plot_coarse_data(dv, hemi, var_name, yerr_name=None, ymax=None):
 vars_ = ('p', 'CI', 'N')
 hemis = ('l', 'r')
 
-def get_coarse_data(data_rootpath,L_s):
+def get_coarse_data(data_rootpath):
+    #L_s param was not used
     """
     Reads in data needed to plot anterior/posterior, superior/inferior, IFG
     connectivity to all functional networks.
@@ -249,13 +250,14 @@ def get_coarse_data(data_rootpath,L_s):
     
     """
     # Load arrays
-    data_rootpath_local = os.path.join(data_rootpath, 'Functional_nets', 'Segmented_Roi')
+    data_rootpath_local = os.path.join(data_rootpath, 'Functional_Networks', 'Segmented_roi')
     universal_s = '{}_{}_{}_nets.txt'
     sitess = (('ant', 'post'), ('sup', 'inf'))
     def _extend_d(suffix):
         for h in hemis:
             # v = _load(var, h, site, suffix)
-            v = np.loadtxt(os.path.join(data_rootpath_local, subdir, universal_s.format(var, h, site + suffix)))
+            #v = np.loadtxt(os.path.join(data_rootpath_local, subdir, universal_s.format(var, h, site + suffix))) # ori, w subdir
+            v = np.loadtxt(os.path.join(data_rootpath_local,  universal_s.format(var, h, site + suffix)))
             d[var][h] = np.hstack((d[var][h], v))
     d = {}
     for var in vars_:
@@ -263,9 +265,9 @@ def get_coarse_data(data_rootpath,L_s):
         for h in hemis:
             d[var][h] = np.array([])
         for sites in sitess:
-            subdir = '{}_{}_DLPFC_IFG'.format(*sites)
+            #subdir = '{}_{}_DLPFC_IFG'.format(*sites)
             for site in sites:
-                _extend_d('DLPFC')
+                _extend_d('_DLPFC')
         site = 'IFG'
         _extend_d('')
     # reshape arrays
@@ -283,18 +285,18 @@ def get_coarse_data(data_rootpath,L_s):
 
 def plot_fine_data(data_rootpath, plot_in_one_flag=False):
     #TODO : automat for l and right 
-    p = np.loadtxt(os.path.join(data_rootpath, 'Functional_nets', 'p_Eff_roi_L_nets_0_100ms.txt'))
+    p = np.loadtxt(os.path.join(data_rootpath, 'Functional_Networks', 'p_Eff_roi_L_nets.txt'))
     # take left to left
     n_parcels = 10
     n_networks = 7
     p_ll = p[:n_parcels, :n_networks].T.flatten() #the index arent necessary 
-    CI = np.loadtxt(os.path.join(data_rootpath, 'Functional_nets', 'CI_Eff_roi_L_nets_0_100ms.txt'))
+    CI = np.loadtxt(os.path.join(data_rootpath, 'Functional_Networks', 'CI_Eff_roi_L_nets.txt'))
     CI_ll = CI[:n_parcels, :n_networks].T.flatten()
-    colors = list(cd.colors_dlpfc_dict.values())[:n_parcels]
-    labels = list(cd.colors_dlpfc_dict.keys())[:n_parcels]
+    colors = list(cd.colors_lpfc_dict.values())[:n_parcels]
+    labels = list(cd.colors_lpfc_dict.keys())[:n_parcels]
     fontsize = 50 
     figsize = (9, 10)
-    ymax = 0.25
+    ymax = 0.3
     if plot_in_one_flag:
         fig = plt.figure(figsize=figsize)
         ax = fig.add_subplot()
@@ -341,19 +343,19 @@ def plot_fine_data(data_rootpath, plot_in_one_flag=False):
     plt.show()
 def plot_fine_data_rh(data_rootpath, plot_in_one_flag=False):
     #TODO : automat for l and right 
-    p = np.loadtxt(os.path.join(data_rootpath, 'Functional_nets', 'p_Eff_roi_R_nets_0_100ms.txt'))
+    p = np.loadtxt(os.path.join(data_rootpath, 'Functional_Networks', 'p_Eff_roi_R_nets.txt'))
     # take left to left
     n_parcels_l = 10 
     n_parcels = 12 #10 left
     n_networks = 7
     p_rr = p.T.flatten()
-    CI = np.loadtxt(os.path.join(data_rootpath, 'Functional_nets', 'CI_Eff_roi_R_nets_0_100ms.txt'))
+    CI = np.loadtxt(os.path.join(data_rootpath, 'Functional_Networks', 'CI_Eff_roi_R_nets.txt'))
     CI_rr = CI.T.flatten()
-    colors = list(cd.colors_dlpfc_dict.values())[n_parcels_l:]
-    labels = list(cd.colors_dlpfc_dict.keys())[n_parcels_l:]
+    colors = list(cd.colors_lpfc_dict.values())[n_parcels_l:]
+    labels = list(cd.colors_lpfc_dict.keys())[n_parcels_l:]
     fontsize = 50 
     figsize = (9, 10)
-    ymax = 0.25
+    ymax = 0.3
     if plot_in_one_flag:
         fig = plt.figure(figsize=figsize)
         ax = fig.add_subplot()

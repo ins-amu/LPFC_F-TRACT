@@ -30,6 +30,8 @@ The matrices are organized with stimulated parcels in rows and recorded parcels 
 - MNE_data: contains mesh and '.label' object to plot brains
 - matplotlib_curly_brace: module used to plot curly braces with region data in matrices
 
+The complete environnement used is shared in a .yml and main requirements are also specified in a text file, automatically included with setup_env.sh  
+
 ### Results Directory
 Contains processed matrices with the following naming convention:
 `parameter_stimulatedParcelResolution_recordedParcelResolution_timeWindow`

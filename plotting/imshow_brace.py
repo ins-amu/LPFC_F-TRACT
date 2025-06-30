@@ -129,7 +129,7 @@ def plot_aff_eff_with_braces(rootpath,output_path, var_name, cmap, norm, cb_max 
     ######################
     # lobes OD translation
     ######################
-    ref = idx_reader(os.path.join(rootpath, "Lausanne2008-33__Lausanne2008-125", "index_y_33to125_0_100ms.txt"))
+    ref = idx_reader(os.path.join(rootpath, "Lausanne2008-33_Lausanne2008-125", "index_x_33to125_0_100_ms.txt"))
     print("ref", ref)
     lobes_od = get_lobes_od_2h(lobes_od_1h)
     print("lobes_od", lobes_od)
@@ -148,9 +148,9 @@ def plot_aff_eff_with_braces(rootpath,output_path, var_name, cmap, norm, cb_max 
     # data reading
     ###################
    
-    a_square = np.loadtxt(os.path.join(rootpath, "Lausanne2008-125__Lausanne2008-33", var_name + "_125to125_0_100ms.txt"))
-    a_eff = np.loadtxt(os.path.join(rootpath, "Lausanne2008-125__Lausanne2008-33", var_name + "_125to33_0_100ms.txt"))
-    a_aff = np.loadtxt(os.path.join(rootpath, "Lausanne2008-33__Lausanne2008-125", var_name + "_33to125_0_100ms.txt"))
+    a_square = np.loadtxt(os.path.join(rootpath, "Lausanne2008-125_Lausanne2008-33", var_name + "_125to125_0_100_ms.txt"))
+    a_eff = np.loadtxt(os.path.join(rootpath, "Lausanne2008-125_Lausanne2008-33", var_name + "_125to33_0_100_ms.txt"))
+    a_aff = np.loadtxt(os.path.join(rootpath, "Lausanne2008-33_Lausanne2008-125", var_name + "_33to125_0_100_ms.txt"))
     tot_eff = np.hstack((a_square, a_eff))
     print('tot_eff.shape', tot_eff.shape)
     tot_aff = np.vstack((a_square, a_aff)).T
