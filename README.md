@@ -33,6 +33,8 @@ The matrices are organized with stimulated parcels in rows and recorded parcels 
 The complete environnement used is shared in a .yml and main requirements are also specified in a text file, automatically included with setup_env.sh  
 
 ### Results Directory
+All results showed in the paper are provided for connectivity computed for Zth5. We also share the main matrix of efferent and afferent connectivity (Lausanne2008125 to 33 parcellation) computed for general time window 0-100ms for thresholds 3, 4, 6, and 7. 
+
 Contains processed matrices with the following naming convention:
 `parameter_stimulatedParcelResolution_recordedParcelResolution_timeWindow`
 
