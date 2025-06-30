@@ -1,0 +1,27 @@
+
+    Time Windows:
+      General: [0, 100]
+      Direct: [0, 50]
+      Indirect: [100, 400]
+    Collapse Config Names:
+      General: max_peak_delay_100__zth4___min_peak_delay_0__zth4
+      Direct: max_peak_delay_50__zth4___min_peak_delay_0__zth4
+      Indirect: max_peak_delay_400__zth4___min_peak_delay_100__zth4
+    N recordings mask: 50
+    N implantations mask: 3
+    Delays cb (ms):
+      Direct min: 20
+      Direct max: 35
+      Indirect min: 150
+      Indirect max: 200
+      General max: 80
+    P avg cb:
+      Min avg: 0.1
+      Max avg: 0.175
+    P thresholds:
+      Max p for connections: 0.25
+      Max p general: 0.5
+    N cb:
+      Min cb N: 50
+      Max cb N: 10000
+    
